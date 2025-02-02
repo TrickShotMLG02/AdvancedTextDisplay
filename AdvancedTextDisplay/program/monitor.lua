@@ -2,11 +2,10 @@ local basalt = require("basalt")
 
 -- List of strings to display
 local textLines = {
-    "First Line",
-    "Second Line",
-    "Third Line",
-    "Fourth Line",
-    "Fifth Line",
+    {text = "First Line", bgColor = colors.red, textColor = colors.white, textScale = 1, textAlign = "center"},
+    {text = "Second Line", bgColor = colors.black, textColor = colors.yellow, textScale = 1, textAlign = "left"},
+    {text = "Third Line", bgColor = colors.red, textColor = colors.white, textScale = 1, textAlign = "right"},
+    {text = "Fourth Line", bgColor = colors.black, textColor = colors.yellow, textScale = 1, textAlign = "center"},
 }
 
 -- debugging
@@ -67,14 +66,15 @@ local main = basalt.addMonitor()
 main:setMonitor(_G.controlMonitor)
 
 -- default content pane
-local flex = main:addFlexbox():setWrap("wrap"):setBackground(colors.red):setPosition(1, 1):setSize("parent.w", "parent.h"):setDirection("column"):setSpacing(0)
+local flex = main:addFlexbox():setWrap("wrap"):setBackground(colors.yellow):setPosition(1, 1):setSize("parent.w", "parent.h"):setDirection("column"):setSpacing(0)
 
 -- flexbox that contains the individual energy meter displays
 if hideVersionFooter then
     versionFooterHeight = 0
 end
 
-local main = flex:addFlexbox():setWrap("wrap"):setBackground(bgColor):setSize("parent.w", "parent.h" .. "-" .. versionFooterHeight):setSpacing(cellSpacing):setJustifyContent("center")--:setOffset(-1, 0)
+--local main = flex:addFlexbox():setWrap("wrap"):setBackground(bgColor):setSize("parent.w", "parent.h" .. "-" .. versionFooterHeight):setSpacing(cellSpacing):setJustifyContent("center")--:setOffset(-1, 0)
+local main = flex:addFrame():setBackground(bgColor):setSize("parent.w", "parent.h" .. "-" .. versionFooterHeight)--:setOffset(0, -1)
 
 -- frame that contains the footer (previous, next, page number)
 if not hideVersionFooter then
@@ -125,24 +125,23 @@ setupMonitor = function()
     -- set up lines
 
     -- Calculate row height
-    local rowHeight = math.floor(main:getHeight() / numLines)
+    local lineHeight = math.floor(main:getHeight() / numLines)
 
     -- Add rows with alternating colors
-    for i = 1, numLines do
-        lineFrames[i] = main:addFrame()
-            :setBackground(colorsList[(i % 2) + 1])
-            :setSize("parent.w", rowHeight)
-            :setOffset("20", "0")
+    
+    for i, line in ipairs(textLines) do
+        --lineFrames[i] = main:addFlexbox():setWrap("nowrap"):setBackground(line.bgColor):setPosition(1, (i - 1) * lineHeight):setSize("parent.w", lineHeight):setJustifyContent("center")
+        lineFrames[i] = main:addFrame():setBackground(line.bgColor):setPosition(1, (i - 1) * lineHeight + 1):setSize("parent.w", lineHeight)
     end
 
-    for i = 1, numLines do
-        lineFrames[i]
-        :addLabel()
-        :setText(textLines[i])
-        :setFontSize(1)
-        :setSize("parent.w", 1)
-        :setPosition("0", "parent.h / 2")
-        :setTextAlign("center")
+    for i, line in ipairs(textLines) do
+        lineFrames[i]:addLabel()
+            :setText(line.text)
+            :setFontSize(line.textScale)
+            :setSize("parent.w", "parent.h")
+            --:setPosition("1", "1")
+            :setTextAlign(line.textAlign)
+            :setForeground(line.textColor)
     end
 
     -- setup footer
