@@ -1,0 +1,6 @@
+{
+  version = "1.0-release",
+  language = "en",
+  autoUpdate = 1,
+  debug = 0
+}
