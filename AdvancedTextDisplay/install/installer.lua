@@ -9,7 +9,7 @@
 local arg = {... }
 local update
 local branch = ""
-local repoUrl = "https://raw.githubusercontent.com/TrickShotMLG02/EnergyMonitor/"
+local repoUrl = "https://raw.githubusercontent.com/TrickShotMLG02/AdvancedTextDisplay/"
 local selectedLang = {}
 local installLang = nil
 
